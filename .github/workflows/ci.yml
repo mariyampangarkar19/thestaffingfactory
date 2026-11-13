@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: staffing_test
+      DB_USERNAME: sp_app
+      DB_PASSWORD: app_pw
+      DB_OWNER_USERNAME: sp_owner
+      DB_OWNER_PASSWORD: owner_pw
+      DB_PLATFORM_USERNAME: sp_platform
+      DB_PLATFORM_PASSWORD: platform_pw
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: pgsql, pdo_pgsql, intl, mbstring, sodium, zip, gd, redis
+          coverage: none
+
+      - name: Create database roles (same layout as production)
+        env:
+          PGPASSWORD: postgres
+        run: psql -h 127.0.0.1 -U postgres -v ON_ERROR_STOP=1 -f docker/postgres/init.sql
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Check for known vulnerable packages
+        run: composer audit
+
+      - name: Code style
+        run: vendor/bin/pint --test
+
+      - name: Static analysis (Larastan)
+        # Not yet run against this codebase; reported but not blocking until the first pass is cleaned up (milestone 1).
+        continue-on-error: true
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+      - name: Prepare app
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Tests (real Postgres, row-level security enforced)
+        run: php artisan test
