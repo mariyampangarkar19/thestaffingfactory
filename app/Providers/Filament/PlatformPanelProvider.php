@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Http\Middleware\UsePlatformConnection;
 use App\Providers\Filament\Concerns\ConfiguresPanel;
+use App\Support\Branding;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Pages\Dashboard;
@@ -25,7 +26,9 @@ class PlatformPanelProvider extends PanelProvider
             ->authGuard('platform')
             ->login()
             ->multiFactorAuthentication([AppAuthentication::make()->recoverable()], isRequired: true)
-            ->brandName(config('platform.name').' · Platform')
+            ->brandName(fn (): string => Branding::name().' · '.__('Platform'))
+            ->brandLogo(Branding::logoUrl())
+            ->brandLogoHeight(Branding::logoHeight())
             ->discoverResources(in: app_path('Filament/Platform/Resources'), for: 'App\Filament\Platform\Resources')
             ->discoverPages(in: app_path('Filament/Platform/Pages'), for: 'App\Filament\Platform\Pages')
             ->pages([Dashboard::class])

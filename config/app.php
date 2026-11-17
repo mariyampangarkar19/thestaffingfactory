@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => 'Platform', // replaced at boot by the product name in config/branding.php
 
     /*
     |--------------------------------------------------------------------------

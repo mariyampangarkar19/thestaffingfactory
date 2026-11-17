@@ -15,6 +15,7 @@ use App\Models\StaffRequest;
 use App\Models\Timesheet;
 use App\Models\User;
 use App\Reports\ReportRegistry;
+use App\Support\Branding;
 use App\Tenancy\QueueTenancy;
 use App\Tenancy\TenantContext;
 use Filament\Schemas\Components\Section;
@@ -34,6 +35,10 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // The product name lives only in config/branding.php; Laravel's own name and the email sender name follow it.
+        config(['app.name' => Branding::name()]);
+        config(['mail.from.name' => config('mail.from.name') ?: Branding::name()]);
+
         $this->app->scoped(TenantContext::class);
         $this->app->singleton(CountryPackRegistry::class, fn () => new CountryPackRegistry(config('platform.country_packs')));
         $this->app->singleton(ReportRegistry::class, fn () => new ReportRegistry(config('platform.reports')));

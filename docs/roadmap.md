@@ -106,7 +106,7 @@ Goal: a secure, deployed foundation the client owns.
 
 ## Open decisions (client)
 
-1. **Product name** to replace the working name "Staffing Platform" (not "WAKANDA Force"; register the chosen name with OAPI).
+1. **Product name**: OPOPO (One People One Power), set in `config/branding.php`. Still to do on the client side: logo files, and registering the name with OAPI.
 2. **Platform domain** for agency sub-domains (e.g. `app.<name>.com`), and TSF's own address (e.g. `portal.thestafffactory.com`).
 3. **Hosting accounts** in the client's name (ADR 0004).
 4. **Online payments for agency subscriptions**: Stripe does not onboard Cameroonian businesses; options are Paddle (merchant of record), Flutterwave/CinetPay (cards + mobile money), or manual invoicing at first.

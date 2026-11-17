@@ -5,12 +5,15 @@ namespace App\Providers\Filament\Concerns;
 use App\Filament\Support\InitialsAvatarProvider;
 use App\Http\Middleware\SetDisplayTimezone;
 use App\Http\Middleware\SetLocale;
+use App\Support\Branding;
 use App\Tenancy\TenantContext;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -19,7 +22,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
- * What every panel shares: brand theme, font, and the middleware stack.
+ * What every panel shares: brand theme, font, product branding (config/branding.php), and the middleware stack.
  * $first is the middleware that decides which database role and agency the request runs as; it must come first.
  */
 trait ConfiguresPanel
@@ -38,6 +41,8 @@ trait ConfiguresPanel
             ->colors(['primary' => self::BRAND_TEAL])
             ->darkMode(false)
             ->defaultAvatarProvider(InitialsAvatarProvider::class)
+            ->favicon(Branding::faviconUrl())
+            ->renderHook(PanelsRenderHook::SIMPLE_PAGE_END, fn (): View => view('filament.partials.powered-by'))
             ->middleware([
                 $first,
                 EncryptCookies::class,
@@ -59,6 +64,6 @@ trait ConfiguresPanel
 
     protected function agencyName(): string
     {
-        return app(TenantContext::class)->tenant()?->name ?? config('platform.name');
+        return app(TenantContext::class)->tenant()?->name ?? Branding::name();
     }
 }

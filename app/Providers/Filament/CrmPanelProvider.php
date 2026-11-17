@@ -10,6 +10,8 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 
 /**
  * Agency Portal (CRM) for agency staff, on the agency's own host.
@@ -33,6 +35,7 @@ class CrmPanelProvider extends PanelProvider
                 isRequired: (bool) config('platform.require_staff_mfa'),
             )
             ->brandName(fn () => $this->agencyName())
+            ->renderHook(PanelsRenderHook::SIDEBAR_FOOTER, fn (): View => view('filament.partials.powered-by'))
             ->sidebarWidth('17rem')
             ->navigationGroups([
                 NavigationGroup::make(fn () => __('Operations')),

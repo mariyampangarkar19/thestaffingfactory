@@ -9,11 +9,6 @@ use App\Reports\PaymentsReport;
 return [
 
     /*
-     * Working name only. The client has not chosen the product name yet.
-     */
-    'name' => env('PLATFORM_NAME', 'Staffing Platform'),
-
-    /*
      * Agencies get {slug}.{base_domain} by default and can add their own domain later.
      * The super-admin panel lives on {admin_subdomain}.{base_domain} and nowhere else.
      */

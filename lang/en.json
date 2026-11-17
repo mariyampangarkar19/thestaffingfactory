@@ -438,5 +438,7 @@
     "{0} No registrations waiting|{1} :count registration waiting for review|[2,*] :count registrations waiting for review": "{0} No registrations waiting|{1} :count registration waiting for review|[2,*] :count registrations waiting for review",
     "{0} None in progress|{1} :count in progress or confirmed|[2,*] :count in progress or confirmed": "{0} None in progress|{1} :count in progress or confirmed|[2,*] :count in progress or confirmed",
     "{1} :count freelancer assigned|[2,*] :count freelancers assigned": "{1} :count freelancer assigned|[2,*] :count freelancers assigned",
-    "{1} :count shift|[2,*] :count shifts": "{1} :count shift|[2,*] :count shifts"
+    "{1} :count shift|[2,*] :count shifts": "{1} :count shift|[2,*] :count shifts",
+    "Powered by :name": "Powered by :name",
+    "Platform": "Platform"
 }

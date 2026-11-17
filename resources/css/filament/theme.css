@@ -205,3 +205,23 @@
     .fi-panel-portal .fi-ta-actions { justify-content: flex-start; }
     .fi-panel-portal .fi-ta-actions .fi-btn { width: 100%; min-height: 3rem; }
 }
+
+/* Product "Powered by" line (name and tagline come from config/branding.php) */
+.sp-powered-by {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.025em;
+    color: var(--md-on-surface-variant, #5b6b70);
+}
+.fi-sidebar-footer .sp-powered-by,
+.fi-sidebar .sp-powered-by {
+    margin: 0;
+    padding: 0.75rem 1.5rem 1rem;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    text-align: left;
+    font-size: 0.6875rem;
+    color: rgb(255 255 255 / 0.6);
+}
+.sp-powered-by__tagline { white-space: nowrap; }

@@ -1,4 +1,6 @@
-# Staffing Platform (working name)
+# OPOPO (One People One Power)
+
+The product name, tagline, logo and favicon are set in `config/branding.php` only. Change them there and every screen, email and browser tab follows; a test fails if the name is written anywhere else in the code. Each agency still sees its own name inside its CRM and portal.
 
 Multi-agency staffing CRM and freelancer portal. First agency: **The Staffing Factory** (Cameroon). Built to be leased to other recruitment agencies as SaaS.
 
