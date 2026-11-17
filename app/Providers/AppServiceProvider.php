@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Reports\ReportRegistry;
 use App\Tenancy\QueueTenancy;
 use App\Tenancy\TenantContext;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -41,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         QueueTenancy::register();
+
+        // Sections fill the page width; fields inside them form the columns.
+        Section::configureUsing(fn (Section $section) => $section->columnSpanFull());
 
         // Day before month, 24-hour clock: how dates are written in Cameroon and most of the world outside the US.
         Table::configureUsing(fn (Table $table) => $table

@@ -128,7 +128,7 @@ class ShiftResource extends BaseResource
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make(fn (Shift $record) => $record->position->jobRole->name().' · '.$record->staffRequest->client->company_name)->columns(3)->schema([
+            Section::make(fn (Shift $record) => $record->position->jobRole->name().' · '.$record->staffRequest->client->company_name)->columns(3)->columnSpanFull()->schema([
                 TextEntry::make('starts_at')->label(__('Starts'))->dateTime('D j M Y, H:i'),
                 TextEntry::make('ends_at')->label(__('Ends'))->dateTime('D j M Y, H:i'),
                 TextEntry::make('status')->label(__('Status'))->badge(),

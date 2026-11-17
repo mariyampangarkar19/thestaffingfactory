@@ -37,7 +37,7 @@ class NotesRelationManager extends RelationManager
     {
         return $schema->columns(2)->components([
             Select::make('kind')->label(__('Type'))->options(NoteKind::class)->default(NoteKind::Note)->required(),
-            DateTimePicker::make('occurred_at')->label(__('When'))->seconds(false)->maxDate(now()->addMinute()),
+            DateTimePicker::make('occurred_at')->label(__('When'))->seconds(false),
             Textarea::make('body')->label(__('Details'))->required()->maxLength(5000)->rows(4)->columnSpanFull(),
         ]);
     }

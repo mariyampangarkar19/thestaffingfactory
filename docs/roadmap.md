@@ -6,6 +6,43 @@ Agreed with the client on 8 Nov 2026: **AED 11,000 (USD 3,000)**, five milestone
 
 **Out of scope (change request if wanted):** hirer/client logins and portal, company verification (KYB), quotes and invoices sent to hirers, e-signature of contracts, online card/mobile-money payments, native mobile apps, country packs other than Cameroon (paid add-ons, e.g. UAE WPS/visa).
 
+## Status on 17 Nov 2026: first working build
+
+Delivery follows the sections of the Trater quote. Sections 1 and 2 (the "main platform modules") are built and run locally with demo data; see the README, "Try it with demo data".
+
+**Section 1, Agency Portal (CRM): built**
+
+| Quote item | Where | Notes |
+|---|---|---|
+| Dashboard | CRM home | Freelancers, customers, new requests, active / upcoming / completed assignments, registrations and timesheets waiting |
+| Customer management | People > Customers | Company, contacts, requests, notes, documents. Customers have no login |
+| Staffing requests | Operations > Staffing requests | Website or manual, positions and numbers, operator in charge, New / In progress / Confirmed / Completed / Cancelled |
+| Customer communication | "Notes and contact history" tab | Calls, emails, WhatsApp, meetings, internal notes |
+| Freelancer management | People > Freelancers | Review and approve, quiz result, positions, availability, documents, evaluations, history |
+| Assignments and scheduling | Operations > Shifts, Calendar | Assign with checks for approval, clashes, unavailable dates and headcount |
+| Timesheets and payments | Finance | Approve, adjust or reject hours; payments built from approved hours; mark paid |
+| Contracts and documents | Records > Documents | Private storage, review, expiry dates, share with freelancer |
+| Reports and exports | Records > Reports | Assignments, hours, payments, freelancers; Excel, or print view saved as PDF |
+| Team and operators | Settings > Team | Invite by email, six roles, remove access |
+
+**Section 2, Freelancer Portal: built**
+
+Home (next assignments, hours to submit, last payment, announcements), My assignments, My calendar, Timesheets (submit hours), Payments, My documents (CV, photo, intro video, certificates), My profile, in-portal notifications. Freelancers cannot browse or apply for work.
+
+**Known gaps in this build**
+
+- Not deployed yet: no test link until hosting accounts exist (section 7).
+- Notifications are in the portal only. Email, SMS and WhatsApp alerts need a provider (open decision 5).
+- PDF export is the browser's "Save as PDF" on a print view, not a generated file.
+- No virus scan on uploads yet (type, size and private storage are enforced).
+- The freelancer portal uses the same component library as the CRM with a phone layout; a fully custom portal design is a later decision.
+- Website requests reach the CRM through the same signed API as registrations; the request endpoint itself comes with section 4.
+- Larastan is not yet blocking in CI.
+
+**Next:** section 3 (super admin: agencies, plans, manual payment records), section 4 (website forms), section 5 (multi-agency packaging), section 6 (security audit), section 7 (test link, QA, deployment).
+
+The milestone lists below are the original plan of 8 Nov and are kept for reference; where they differ from the quote's sections, the quote wins.
+
 ## Milestone 1: Setup (AED 2,500)
 
 Goal: a secure, deployed foundation the client owns.

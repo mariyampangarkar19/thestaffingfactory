@@ -20,6 +20,21 @@ What is in place now, and what each milestone adds. Not legal advice; the client
 | Supply chain | `composer audit` in CI, Dependabot weekly, lock files committed |
 | Bulk deletes | Not offered in the CRM; agencies cannot be deleted with one click |
 
+## Added with the CRM and portal build (17 Nov 2026)
+
+- **Business rules live in `app/Actions`**, one class per operation, and are re-checked on the server every time. A button hidden on screen is never the only protection.
+- **Every screen and action is gated by a policy** (`app/Policies`) built on the role matrix in `RolesAndPermissionsSeeder`. Tests open every CRM screen as each role.
+- **Freelancer portal:** each query starts from the signed-in person's own profile; ids sent by the browser are re-read through that scope. A freelancer can only change the fields listed in `UpdateOwnProfile::FIELDS`.
+- **Uploads:** type read from the file's content (not its name), per-type size limits, random stored name, private disk under the agency's folder, SHA-256 recorded. Downloads go through one controller: signed in, same agency, policy check, logged, always sent as an attachment.
+- **Exports:** permission per report, one-year limit, logged, and cells that start with `=`, `+`, `-` or `@` are neutralised so text typed on the public website form cannot run as a spreadsheet formula.
+- **Money** is calculated in integer minor units. A timesheet can sit on one payment only (database unique key) and is frozen once it is on a payment.
+- **Removing a team member** clears their roles, password, two-step secret and sessions at once; the row stays so history keeps its author.
+- **No third-party requests from the pages:** fonts are self-hosted and avatars are drawn locally.
+- **The agency context is cleared at the end of every request and job**, so long-running workers cannot carry one agency into the next request.
+- Audit log entries are written for approvals, status changes, assignments, timesheet decisions, payments, uploads, downloads, exports and team changes.
+
+Still open, tracked for the security audit (quote section 6): strict Content-Security-Policy with nonces, virus scanning of uploads, audit log viewer, data export and erasure tools, rate limits per account on portal actions, Larastan blocking in CI.
+
 ## Added later
 
 - M2: private file storage with signed short-lived URLs, MIME/extension/size checks, virus-scan hook, per-agency storage prefix

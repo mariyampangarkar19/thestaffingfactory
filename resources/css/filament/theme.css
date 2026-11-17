@@ -98,12 +98,23 @@
 .fi-btn.fi-color-primary:not(.fi-outlined) { background-color: var(--md-primary); color: var(--md-on-primary); }
 .fi-btn.fi-color-primary:not(.fi-outlined):hover { background-color: #005561; box-shadow: var(--md-elevation-1); }
 .fi-btn.fi-color-gray, .fi-btn.fi-outlined { --tw-ring-color: var(--md-outline); }
+.fi-btn.fi-color-gray:not(.fi-outlined) { background-color: var(--md-surface); color: var(--md-primary); box-shadow: inset 0 0 0 1px var(--md-outline); } /* outlined button */
+.fi-btn.fi-color-gray:not(.fi-outlined):hover { background-color: rgb(0 104 118 / 0.08); }
+.fi-btn.fi-color-success:not(.fi-outlined) { background-color: #1b6b3a; color: #ffffff; } /* 6.6:1 on white text */
+.fi-btn.fi-color-success:not(.fi-outlined):hover { background-color: #14552d; }
+.fi-btn.fi-color-danger:not(.fi-outlined) { background-color: var(--md-surface); color: var(--md-error); box-shadow: inset 0 0 0 1px var(--md-error); } /* destructive = outlined, never the loudest button */
+.fi-btn.fi-color-danger:not(.fi-outlined):hover { background-color: rgb(186 26 26 / 0.08); }
+.fi-modal-footer .fi-btn.fi-color-danger:not(.fi-outlined) { background-color: var(--md-error); color: #ffffff; box-shadow: none; } /* confirm step of a destructive action */
+.fi-btn .fi-icon { color: currentColor; }
 .fi-icon-btn { border-radius: var(--md-shape-full); }
 .fi-link.fi-color-primary, .fi-ta-text-item a { color: var(--md-primary); font-weight: 500; }
 
 /* Text fields: outlined, extra-small shape, 48px tall */
-.fi-input-wrp { border-radius: var(--md-shape-xs); box-shadow: none; --tw-ring-color: var(--md-outline); background-color: var(--md-surface); }
-.fi-input-wrp:focus-within { --tw-ring-color: var(--md-primary); --tw-ring-shadow: 0 0 0 2px var(--md-primary); }
+.fi-input-wrp { border-radius: var(--md-shape-xs); box-shadow: inset 0 0 0 1px var(--md-outline); background-color: var(--md-surface); }
+.fi-input-wrp:hover { box-shadow: inset 0 0 0 1px var(--md-on-surface); }
+.fi-input-wrp:focus-within, .fi-input-wrp:not(.fi-disabled):focus-within { box-shadow: inset 0 0 0 2px var(--md-primary); }
+.fi-input-wrp.fi-invalid, .fi-input-wrp.fi-invalid:focus-within { box-shadow: inset 0 0 0 2px var(--md-error); }
+.fi-input-wrp.fi-disabled { box-shadow: inset 0 0 0 1px var(--md-outline-variant); background-color: var(--md-surface-dim); }
 .fi-input, .fi-select-input { min-height: 3rem; color: var(--md-on-surface); }
 .fi-input::placeholder { color: var(--md-outline); }
 .fi-checkbox-input, .fi-radio-input { color: var(--md-primary); }
@@ -179,3 +190,18 @@
 .sp-announcement-head strong { font-weight: 500; }
 .sp-announcement-head span { font-size: 0.8125rem; color: var(--md-on-surface-variant); white-space: nowrap; }
 .sp-announcements p { margin-top: 0.25rem; font-size: 0.875rem; color: var(--md-on-surface-variant); white-space: pre-line; }
+
+/* Freelancer portal on a phone: each table row becomes a card, so nothing scrolls sideways */
+@media (max-width: 640px) {
+    .fi-panel-portal .fi-ta-content-ctn { overflow-x: visible; }
+    .fi-panel-portal .fi-ta-table, .fi-panel-portal .fi-ta-table > tbody { display: block; width: 100%; }
+    .fi-panel-portal .fi-ta-table > thead { display: none; }
+    .fi-panel-portal .fi-ta-table > tbody > .fi-ta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; padding: 0.875rem 1rem; border-bottom: 1px solid var(--md-outline-variant); }
+    .fi-panel-portal .fi-ta-table > tbody > .fi-ta-row > .fi-ta-cell { display: block; padding: 0; width: auto; max-width: 100%; }
+    .fi-panel-portal .fi-ta-table > tbody > .fi-ta-row > .fi-ta-cell:first-child { flex-basis: 100%; }
+    .fi-panel-portal .fi-ta-table > tbody > .fi-ta-row > .fi-ta-cell:has(.fi-ta-actions) { flex-basis: 100%; margin-top: 0.5rem; }
+    .fi-panel-portal .fi-ta-table .fi-ta-text { padding: 0.125rem 0; white-space: normal; }
+    .fi-panel-portal .fi-ta-table .fi-ta-text-item.fi-ta-placeholder, .fi-panel-portal .fi-ta-table .fi-ta-placeholder { display: none; }
+    .fi-panel-portal .fi-ta-actions { justify-content: flex-start; }
+    .fi-panel-portal .fi-ta-actions .fi-btn { width: 100%; min-height: 3rem; }
+}

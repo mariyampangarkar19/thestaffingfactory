@@ -30,6 +30,7 @@ use App\Models\Tenant;
 use App\Models\User;
 use App\Tenancy\TenantContext;
 use Database\Seeders\DemoSeeder;
+use Filament\Facades\Filament;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -198,6 +199,16 @@ class BusinessRulesTest extends TestCase
 
         $team->changeRole($this->staff('manager'), Role::Owner, $owner);
         $this->assertTrue($this->staff('manager')->hasRole('owner'));
+
+        // Removing access signs the person out for good but keeps their record; they can be invited again.
+        $this->refused(fn () => $team->removeAccess($owner, $owner));
+        $sales = $this->staff('sales');
+        $oldPassword = $sales->password;
+        $team->removeAccess($sales, $owner);
+        $sales->refresh();
+        $this->assertFalse($sales->canAccessPanel(Filament::getPanel('crm')));
+        $this->assertNotSame($oldPassword, $sales->password);
+        $this->assertTrue($team->handle('Yannick Essomba', 'sales@demo.test', Role::Viewer)->hasRole('viewer'));
     }
 
     public function test_a_freelancer_only_changes_the_fields_they_own(): void

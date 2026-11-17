@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Screens;
 
+use App\Models\Announcement;
 use App\Models\Client;
 use App\Models\FreelancerProfile;
 use App\Models\JobRole;
@@ -77,6 +78,9 @@ class DemoScreensTest extends TestCase
             'crm/job-roles/create',
             'crm/job-roles/'.JobRole::query()->value('id').'/edit',
             'crm/team',
+            'crm/announcements',
+            'crm/announcements/create',
+            'crm/announcements/'.Announcement::query()->value('id').'/edit',
             'crm/documents',
             'crm/reports',
         ]);

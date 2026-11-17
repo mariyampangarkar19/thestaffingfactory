@@ -106,7 +106,7 @@ class PaymentResource extends BaseResource
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make(fn (Payment $record) => $record->reference)->columns(3)->schema([
+            Section::make(fn (Payment $record) => $record->reference)->columns(3)->columnSpanFull()->schema([
                 TextEntry::make('freelancer')->label(__('Freelancer'))->state(fn (Payment $record) => $record->freelancerProfile->fullName()),
                 TextEntry::make('amount')->label(__('Amount'))->money(fn (Payment $record) => $record->currency)->weight('bold'),
                 TextEntry::make('status')->label(__('Status'))->badge(),
@@ -188,7 +188,7 @@ class PaymentResource extends BaseResource
                 ->schema([
                     Select::make('method')->label(__('Method'))->options(self::methods())->required(),
                     TextInput::make('transaction_ref')->label(__('Transaction reference'))->maxLength(190),
-                    DateTimePicker::make('paid_at')->label(__('Paid on'))->seconds(false)->default(now())->maxDate(now()->addMinutes(5))->required(),
+                    DateTimePicker::make('paid_at')->label(__('Paid on'))->seconds(false)->default(now())->required(),
                 ])
                 ->action(fn (Payment $record, array $data) => RunsDomainActions::run(
                     fn () => app(MarkPaymentPaid::class)->handle(

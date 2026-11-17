@@ -104,6 +104,14 @@ class UserResource extends BaseResource
                         fn () => app(CreateStaffMember::class)->changeRole($record, Role::from($data['role']), auth()->user()),
                         __('Role updated'),
                     )),
+                Action::make('removeAccess')->label(__('Remove access'))->icon('heroicon-o-no-symbol')->color('danger')
+                    ->visible(fn (User $record) => auth()->user()->can('update', $record) && ! $record->is(auth()->user()))
+                    ->requiresConfirmation()
+                    ->modalDescription(__('They are signed out at once and can no longer sign in. Their past work stays in the records. You can invite them again later.'))
+                    ->action(fn (User $record) => RunsDomainActions::run(
+                        fn () => app(CreateStaffMember::class)->removeAccess($record, auth()->user()),
+                        __('Access removed'),
+                    )),
             ])
             ->emptyStateHeading(__('No team members yet'));
     }

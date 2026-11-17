@@ -1,5 +1,24 @@
-# Local development services. The PHP app runs on your machine (php artisan serve) or Herd/Valet.
+# Local services.
+#   docker compose up -d                  database, Redis and Mailpit only (run the app yourself with php artisan serve)
+#   docker compose --profile app up -d    everything, including the app with a demo agency at http://tsf.localhost:8000
 services:
+  app:
+    profiles: [app]
+    build: .
+    depends_on: [postgres, mailpit]
+    ports: ["8000:8000"]
+    environment:
+      APP_URL: http://tsf.localhost:8000
+      PLATFORM_BASE_DOMAIN: localhost     # browsers resolve *.localhost to this computer, so no hosts file is needed
+      PLATFORM_REQUIRE_STAFF_MFA: "false" # demo only; production keeps two-step sign-in on
+      DB_HOST: postgres
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      SEED_DEMO: "1"
+    volumes:
+      - appstorage:/app/storage/app
+
   postgres:
     image: postgres:16
     environment:
@@ -20,3 +39,4 @@ services:
 
 volumes:
   pgdata:
+  appstorage:

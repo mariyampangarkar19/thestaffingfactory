@@ -74,7 +74,7 @@ class ClientResource extends BaseResource
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make(__('Company'))->columns(3)->schema([
+            Section::make(__('Company'))->columns(3)->columnSpanFull()->schema([
                 TextEntry::make('company_name')->label(__('Company name')),
                 TextEntry::make('sector')->label(__('Sector'))->placeholder('—'),
                 TextEntry::make('status')->label(__('Status'))->badge(),

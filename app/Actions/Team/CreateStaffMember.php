@@ -25,12 +25,16 @@ final class CreateStaffMember
 
         $email = Str::lower($email);
 
-        if (User::query()->where('email', $email)->exists()) {
+        $existing = User::query()->where('email', $email)->first();
+
+        // Someone whose access was removed earlier (no role left) can be invited again; anyone else is a duplicate.
+        if ($existing !== null && $existing->roles()->exists()) {
             throw new DomainRuleViolation(__('An account with this email already exists.'));
         }
 
-        $user = DB::transaction(function () use ($name, $email, $role, $phone): User {
-            $user = new User(['name' => $name, 'email' => $email, 'phone' => $phone]);
+        $user = DB::transaction(function () use ($existing, $name, $email, $role, $phone): User {
+            $user = $existing ?? new User(['email' => $email]);
+            $user->fill(['name' => $name, 'phone' => $phone]);
             $user->forceFill(['password' => Str::password(40)])->save();
             $user->assignRole($role->value);
             $this->audit->log('team.member_added', $user, ['role' => $role->value]);
@@ -57,6 +61,36 @@ final class CreateStaffMember
 
         $user->syncRoles([$role->value]);
         $this->audit->log('team.role_changed', $user, ['role' => $role->value]);
+
+        return $user;
+    }
+
+    /**
+     * Ends a staff member's access at once. The account row stays so that notes, approvals and the audit log keep their author.
+     */
+    public function removeAccess(User $user, User $actor): User
+    {
+        if ($user->is($actor)) {
+            throw new DomainRuleViolation(__('You cannot remove your own access.'));
+        }
+
+        if ($user->hasRole(Role::Freelancer->value)) {
+            throw new DomainRuleViolation(__('Freelancer accounts are managed from the freelancer record.'));
+        }
+
+        $this->guardLastOwner($user, Role::Viewer);
+
+        DB::transaction(function () use ($user): void {
+            $user->syncRoles([]);
+            $user->forceFill([
+                'password' => Str::password(40),
+                'remember_token' => null,
+                'app_authentication_secret' => null,
+                'app_authentication_recovery_codes' => null,
+            ])->save();
+            DB::table('sessions')->where('user_id', $user->id)->delete(); // signed out everywhere, immediately
+            $this->audit->log('team.access_removed', $user);
+        });
 
         return $user;
     }

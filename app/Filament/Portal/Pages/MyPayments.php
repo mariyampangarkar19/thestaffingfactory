@@ -12,6 +12,7 @@ use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -54,12 +55,14 @@ class MyPayments extends Page implements HasTable
                 TextColumn::make('reference')->label(__('Reference'))->weight('medium'),
                 TextColumn::make('period_start')->label(__('Period'))->date()
                     ->description(fn (Payment $record) => $record->period_end ? __('to :date', ['date' => $record->period_end->translatedFormat('j M Y')]) : null),
-                TextColumn::make('items_count')->label(__('Shifts'))->alignEnd(),
-                TextColumn::make('amount')->label(__('Amount'))->money(fn (Payment $record) => $record->currency)->alignEnd()->weight('medium'),
+                TextColumn::make('items_count')->label(__('Shifts'))
+                    ->formatStateUsing(fn (int $state) => trans_choice('{1} :count shift|[2,*] :count shifts', $state, ['count' => $state])),
+                TextColumn::make('amount')->label(__('Amount'))->money(fn (Payment $record) => $record->currency)->weight('medium'),
                 TextColumn::make('status')->label(__('Status'))->badge(),
                 TextColumn::make('method')->label(__('Method'))->placeholder('—')
                     ->formatStateUsing(fn (?string $state) => PaymentResource::methods()[$state] ?? $state),
-                TextColumn::make('paid_at')->label(__('Paid on'))->date()->placeholder('—'),
+                TextColumn::make('paid_at')->label(__('Paid on'))->placeholder('—')
+                    ->formatStateUsing(fn (Payment $record) => __('Paid on :date', ['date' => $record->paid_at->timezone(FilamentTimezone::get())->translatedFormat('j M Y')])),
             ])
             ->recordActions([
                 Action::make('slip')->label(__('Payment slip'))->icon('heroicon-o-arrow-down-tray')

@@ -132,7 +132,7 @@ class FreelancerProfileResource extends BaseResource
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make(__('Profile'))->columns(3)->schema([
+            Section::make(__('Profile'))->columns(3)->columnSpanFull()->schema([
                 TextEntry::make('status')->label(__('Status'))->badge(),
                 TextEntry::make('availability_status')->label(__('Availability'))->badge(),
                 TextEntry::make('quiz')->label(__('Quiz'))->badge()
@@ -146,7 +146,7 @@ class FreelancerProfileResource extends BaseResource
                 TextEntry::make('years_experience')->label(__('Years of experience'))->placeholder('—'),
                 TextEntry::make('experience_summary')->label(__('Experience'))->placeholder('—')->columnSpanFull(),
             ]),
-            Section::make(__('Contact'))->columns(3)->schema([
+            Section::make(__('Contact'))->columns(3)->columnSpanFull()->schema([
                 TextEntry::make('email')->label(__('Email'))->placeholder('—')->copyable(),
                 TextEntry::make('phone')->label(__('Phone'))->placeholder('—')->copyable(),
                 TextEntry::make('whatsapp')->label(__('WhatsApp'))->placeholder('—')->copyable(),
@@ -154,7 +154,7 @@ class FreelancerProfileResource extends BaseResource
                 TextEntry::make('address')->label(__('Address'))->placeholder('—'),
                 TextEntry::make('date_of_birth')->label(__('Date of birth'))->date()->placeholder('—'),
             ]),
-            Section::make(__('Registration'))->columns(3)->collapsed()->schema([
+            Section::make(__('Registration'))->columns(3)->columnSpanFull()->collapsed()->schema([
                 TextEntry::make('created_at')->label(__('Signed up'))->dateTime(),
                 TextEntry::make('source')->label(__('Source'))->placeholder('—'),
                 TextEntry::make('consented_at')->label(__('Consent given'))->dateTime()->placeholder('—'),

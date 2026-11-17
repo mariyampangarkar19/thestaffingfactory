@@ -78,10 +78,10 @@ class MyTimesheets extends Page implements HasTable
             ->defaultSort('shifts.starts_at', 'desc')
             ->columns([
                 ...array_slice(MyAssignments::columns(), 0, 2),
-                TextColumn::make('timesheet.submitted_minutes')->label(__('Hours submitted'))->alignEnd()->placeholder('—')
-                    ->formatStateUsing(fn (?int $state) => Duration::format($state)),
-                TextColumn::make('timesheet.approved_minutes')->label(__('Hours approved'))->alignEnd()->placeholder('—')
-                    ->formatStateUsing(fn (?int $state) => Duration::format($state)),
+                TextColumn::make('timesheet.submitted_minutes')->label(__('Hours'))->placeholder('—')
+                    ->formatStateUsing(fn (?int $state) => __(':hours submitted', ['hours' => Duration::format($state)]))
+                    ->description(fn (Assignment $record) => $record->timesheet?->approved_minutes !== null
+                        ? __(':hours approved', ['hours' => Duration::format($record->timesheet->approved_minutes)]) : null),
                 TextColumn::make('timesheet.status')->label(__('Status'))->badge()->placeholder(__('Hours not submitted')),
                 TextColumn::make('timesheet.review_note')->label(__('Note from the agency'))->placeholder('—')->wrap(),
             ])

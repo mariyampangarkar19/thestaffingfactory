@@ -105,7 +105,7 @@ class DemoSeeder extends Seeder
 
     private function seedAgency(): void
     {
-        $password = (string) env('DEMO_PASSWORD', 'Demo-Agency-2026');
+        $password = (string) config('platform.demo_password');
         $staff = $this->staff($password);
         $roles = $this->positions();
         $freelancers = $this->freelancers($roles, $staff['recruiter'], $password);

@@ -34,6 +34,11 @@ return [
      */
     'require_staff_mfa' => (bool) env('PLATFORM_REQUIRE_STAFF_MFA', true),
 
+    /*
+     * Password given to every login the demo seeder creates. Local testing only; the seeder refuses to run in production.
+     */
+    'demo_password' => env('DEMO_PASSWORD', 'Demo-Agency-2026'),
+
     'locales' => ['en', 'fr'],
 
     /*

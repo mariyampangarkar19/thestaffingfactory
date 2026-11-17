@@ -111,7 +111,7 @@ class StaffRequestResource extends BaseResource
     public static function infolist(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make(fn (StaffRequest $record) => $record->reference.' · '.$record->title)->columns(3)->schema([
+            Section::make(fn (StaffRequest $record) => $record->reference.' · '.$record->title)->columns(3)->columnSpanFull()->schema([
                 TextEntry::make('status')->label(__('Status'))->badge(),
                 TextEntry::make('client.company_name')->label(__('Customer')),
                 TextEntry::make('contact.name')->label(__('Contact'))->placeholder('—'),

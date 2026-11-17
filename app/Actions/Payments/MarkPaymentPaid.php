@@ -22,6 +22,10 @@ final class MarkPaymentPaid
             throw new DomainRuleViolation(__('Only a payment that is still to pay can be marked as paid.'));
         }
 
+        if ($paidAt !== null && $paidAt->greaterThan(now()->addMinutes(5))) {
+            throw new DomainRuleViolation(__('The payment date cannot be in the future.'));
+        }
+
         $payment->forceFill([
             'status' => PaymentStatus::Paid,
             'method' => $method,
