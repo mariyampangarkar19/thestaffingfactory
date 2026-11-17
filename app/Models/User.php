@@ -15,6 +15,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\URL;
@@ -76,5 +77,11 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         }
 
         $this->notify($notification);
+    }
+
+    /** @return HasOne<FreelancerProfile, $this> */
+    public function freelancerProfile(): HasOne
+    {
+        return $this->hasOne(FreelancerProfile::class);
     }
 }

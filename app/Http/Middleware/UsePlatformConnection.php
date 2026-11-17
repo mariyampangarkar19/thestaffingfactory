@@ -18,15 +18,10 @@ final class UsePlatformConnection
         $adminHost = config('platform.admin_subdomain').'.'.config('platform.base_domain');
         abort_unless(strtolower($request->getHost()) === $adminHost, 404);
 
-        $previous = DB::getDefaultConnection();
         DB::setDefaultConnection('pgsql_platform');
         app(TenantContext::class)->enterPlatformMode();
 
-        try {
-            return $next($request);
-        } finally {
-            app(TenantContext::class)->clear();
-            DB::setDefaultConnection($previous);
-        }
+        // Reset when the request ends (AppServiceProvider), so Livewire actions also run on the platform connection.
+        return $next($request);
     }
 }

@@ -26,4 +26,10 @@ class PayRate extends Model
     {
         return $this->belongsTo(JobRole::class);
     }
+
+    /** @return BelongsTo<Client, $this> */
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
 }

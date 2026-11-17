@@ -22,6 +22,7 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutVite();
 
         if (! self::$migrated) {
             Artisan::call('migrate:fresh', ['--database' => 'pgsql_owner', '--force' => true]);

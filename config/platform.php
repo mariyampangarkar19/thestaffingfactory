@@ -1,6 +1,10 @@
 <?php
 
 use App\CountryPacks\Cameroon\CameroonPack;
+use App\Reports\AssignmentsReport;
+use App\Reports\FreelancersReport;
+use App\Reports\HoursReport;
+use App\Reports\PaymentsReport;
 
 return [
 
@@ -25,6 +29,11 @@ return [
         'platform' => env('DB_PLATFORM_USERNAME', 'sp_platform'),
     ],
 
+    /*
+     * Two-factor login for agency staff. Keep true in production; false only for local demos.
+     */
+    'require_staff_mfa' => (bool) env('PLATFORM_REQUIRE_STAFF_MFA', true),
+
     'locales' => ['en', 'fr'],
 
     /*
@@ -33,6 +42,16 @@ return [
      */
     'country_packs' => [
         'CM' => CameroonPack::class,
+    ],
+
+    /*
+     * Reports offered on the CRM "Reports and exports" page: address name => class implementing App\Reports\Contracts\Report.
+     */
+    'reports' => [
+        'assignments' => AssignmentsReport::class,
+        'hours' => HoursReport::class,
+        'payments' => PaymentsReport::class,
+        'freelancers' => FreelancersReport::class,
     ],
 
     'intake' => [

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A position the agency staffs (waiter, hostess...).
@@ -23,5 +24,11 @@ class JobRole extends Model
     public function name(): string
     {
         return app()->getLocale() === 'fr' ? $this->name_fr : $this->name_en;
+    }
+
+    /** @return HasMany<PayRate, $this> */
+    public function payRates(): HasMany
+    {
+        return $this->hasMany(PayRate::class);
     }
 }

@@ -33,9 +33,32 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            'serve' => false,
             'throw' => false,
             'report' => false,
+        ],
+
+        /*
+         * Uploaded documents (IDs, CVs, contracts). Never publicly reachable: files are streamed by
+         * DocumentDownloadController after a permission check. Switch PRIVATE_DISK_DRIVER to "s3" for
+         * Cloudflare R2 / S3 in production; no code change needed.
+         */
+        'private' => env('PRIVATE_DISK_DRIVER', 'local') === 's3' ? [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION', 'auto'),
+            'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'visibility' => 'private',
+            'throw' => true,
+        ] : [
+            'driver' => 'local',
+            'root' => storage_path('app/documents'),
+            'serve' => false,
+            'visibility' => 'private',
+            'throw' => true,
         ],
 
         'public' => [

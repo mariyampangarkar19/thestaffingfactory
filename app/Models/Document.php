@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\DocumentStatus;
+use App\Enums\DocumentType;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,12 +24,18 @@ class Document extends Model
 
     protected function casts(): array
     {
-        return ['expires_on' => 'date', 'reviewed_at' => 'datetime', 'size' => 'integer', 'visible_to_freelancer' => 'boolean'];
+        return ['status' => DocumentStatus::class, 'type' => DocumentType::class, 'expires_on' => 'date', 'reviewed_at' => 'datetime', 'size' => 'integer', 'visible_to_freelancer' => 'boolean'];
     }
 
     /** @return MorphTo<Model, $this> */
     public function documentable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 }

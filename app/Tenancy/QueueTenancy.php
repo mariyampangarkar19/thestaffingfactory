@@ -24,8 +24,13 @@ final class QueueTenancy
             return $context->has() ? ['tenant_id' => $context->id()] : [];
         });
 
-        Event::listen(JobProcessing::class, function (JobProcessing $event): void {
+        // A job run inline (sync queue) starts inside a request that already has an agency: remember it and put it back
+        // afterwards. On a real worker there is nothing to remember, so the worker ends with no agency.
+        $outer = [];
+
+        Event::listen(JobProcessing::class, function (JobProcessing $event) use (&$outer): void {
             $context = app(TenantContext::class);
+            $outer[] = $context->tenant();
             $context->clear();
 
             $tenantId = $event->job->payload()['tenant_id'] ?? null;
@@ -34,7 +39,11 @@ final class QueueTenancy
             }
         });
 
-        $leave = fn () => app(TenantContext::class)->clear();
+        $leave = function () use (&$outer): void {
+            $context = app(TenantContext::class);
+            $previous = array_pop($outer);
+            $previous instanceof Tenant ? $context->set($previous) : $context->clear();
+        };
         Event::listen(JobProcessed::class, $leave);
         Event::listen(JobExceptionOccurred::class, $leave);
     }

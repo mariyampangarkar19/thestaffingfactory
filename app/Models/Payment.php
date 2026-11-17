@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentStatus;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * A payment to a freelancer, recorded by the agency.
@@ -19,7 +21,7 @@ class Payment extends Model
 
     protected function casts(): array
     {
-        return ['period_start' => 'date', 'period_end' => 'date', 'amount' => 'decimal:2', 'paid_at' => 'datetime'];
+        return ['status' => PaymentStatus::class, 'period_start' => 'date', 'period_end' => 'date', 'amount' => 'decimal:2', 'paid_at' => 'datetime'];
     }
 
     /** @return BelongsTo<FreelancerProfile, $this> */
@@ -32,5 +34,11 @@ class Payment extends Model
     public function items(): HasMany
     {
         return $this->hasMany(PaymentItem::class);
+    }
+
+    /** @return MorphMany<Document, $this> */
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
     }
 }

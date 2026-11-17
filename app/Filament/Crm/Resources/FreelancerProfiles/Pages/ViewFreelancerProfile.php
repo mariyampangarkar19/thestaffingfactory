@@ -13,7 +13,8 @@ class ViewFreelancerProfile extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            ...static::getResource()::recordHeaderActions(),
+            ...(static::getResource()::hasPage('edit') ? [EditAction::make()] : []),
         ];
     }
 }

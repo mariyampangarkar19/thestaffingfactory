@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\RequestChannel;
+use App\Enums\RequestStatus;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +24,7 @@ class StaffRequest extends Model
 
     protected function casts(): array
     {
-        return ['starts_on' => 'date', 'ends_on' => 'date', 'confirmed_at' => 'datetime', 'cancelled_at' => 'datetime'];
+        return ['status' => RequestStatus::class, 'channel' => RequestChannel::class, 'starts_on' => 'date', 'ends_on' => 'date', 'confirmed_at' => 'datetime', 'cancelled_at' => 'datetime'];
     }
 
     /** @return BelongsTo<Client, $this> */
@@ -53,5 +55,17 @@ class StaffRequest extends Model
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'notable');
+    }
+
+    /** @return MorphMany<Document, $this> */
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
+    /** @return BelongsTo<ClientContact, $this> */
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(ClientContact::class, 'client_contact_id');
     }
 }

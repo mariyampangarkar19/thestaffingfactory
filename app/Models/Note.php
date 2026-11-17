@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\NoteKind;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -19,12 +21,18 @@ class Note extends Model
 
     protected function casts(): array
     {
-        return ['occurred_at' => 'datetime'];
+        return ['kind' => NoteKind::class, 'occurred_at' => 'datetime'];
     }
 
     /** @return MorphTo<Model, $this> */
     public function notable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

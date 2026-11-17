@@ -30,11 +30,8 @@ final class ResolveTenant
 
         $this->context->set($domain->tenant);
 
-        try {
-            return $next($request);
-        } finally {
-            // Long-running workers (queues, Octane) must never carry one agency into the next request.
-            $this->context->clear();
-        }
+        // The agency is left again when the request ends (AppServiceProvider), not here: Livewire runs its component
+        // after this middleware has returned, and the component must still be inside the agency.
+        return $next($request);
     }
 }

@@ -67,8 +67,8 @@ class StaffingWorkflowTest extends TestCase
         $tenant = $this->createTenant('tsf');
 
         $this->expectException(QueryException::class);
-        app(TenantContext::class)->run($tenant, fn () => FreelancerProfile::query()->create([
-            'first_name' => 'X', 'last_name' => 'Y', 'status' => 'vip',
+        app(TenantContext::class)->run($tenant, fn () => DB::table('freelancer_profiles')->insert([
+            'id' => (string) Str::uuid7(), 'first_name' => 'X', 'last_name' => 'Y', 'status' => 'vip',
         ]));
     }
 

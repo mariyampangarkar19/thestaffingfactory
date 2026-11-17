@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\AvailabilityStatus;
+use App\Enums\FreelancerStatus;
 use App\Tenancy\BelongsToTenant;
 use Database\Factories\FreelancerProfileFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -10,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -34,7 +37,7 @@ class FreelancerProfile extends Model
 
     protected function casts(): array
     {
-        return [
+        return ['status' => FreelancerStatus::class, 'availability_status' => AvailabilityStatus::class,
             'date_of_birth' => 'date',
             'languages' => 'array',
             'country_data' => 'array',
@@ -66,6 +69,13 @@ class FreelancerProfile extends Model
         return $this->hasMany(QuizResult::class);
     }
 
+    /** @return HasOne<QuizResult, $this> */
+    public function latestQuizResult(): HasOne
+    {
+        // Not latestOfMany(): it needs MAX(id), which PostgreSQL does not have for uuid keys.
+        return $this->hasOne(QuizResult::class)->orderByDesc('completed_at');
+    }
+
     /** @return MorphMany<Document, $this> */
     public function documents(): MorphMany
     {
@@ -76,5 +86,35 @@ class FreelancerProfile extends Model
     public function assignments(): HasMany
     {
         return $this->hasMany(Assignment::class);
+    }
+
+    /** @return MorphMany<Note, $this> */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
+    }
+
+    /** @return HasMany<FreelancerUnavailability, $this> */
+    public function unavailabilities(): HasMany
+    {
+        return $this->hasMany(FreelancerUnavailability::class);
+    }
+
+    /** @return HasMany<FreelancerEvaluation, $this> */
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(FreelancerEvaluation::class);
+    }
+
+    /** @return HasMany<Timesheet, $this> */
+    public function timesheets(): HasMany
+    {
+        return $this->hasMany(Timesheet::class);
+    }
+
+    /** @return HasMany<Payment, $this> */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }

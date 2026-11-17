@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ShiftStatus;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,7 @@ class Shift extends Model
 
     protected function casts(): array
     {
-        return ['starts_at' => 'datetime', 'ends_at' => 'datetime', 'break_minutes' => 'integer', 'headcount' => 'integer'];
+        return ['status' => ShiftStatus::class, 'starts_at' => 'datetime', 'ends_at' => 'datetime', 'break_minutes' => 'integer', 'headcount' => 'integer'];
     }
 
     /** @return BelongsTo<StaffRequest, $this> */

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\AssignmentStatus;
 use App\Tenancy\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * A freelancer placed on a shift.
@@ -19,7 +21,7 @@ class Assignment extends Model
 
     protected function casts(): array
     {
-        return ['pay_rate' => 'decimal:2', 'notified_at' => 'datetime'];
+        return ['status' => AssignmentStatus::class, 'pay_rate' => 'decimal:2', 'notified_at' => 'datetime'];
     }
 
     /** @return BelongsTo<Shift, $this> */
@@ -38,5 +40,17 @@ class Assignment extends Model
     public function timesheet(): HasOne
     {
         return $this->hasOne(Timesheet::class);
+    }
+
+    /** @return MorphMany<Note, $this> */
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'notable');
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function assignedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
     }
 }
