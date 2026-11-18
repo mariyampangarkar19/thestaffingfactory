@@ -40,7 +40,7 @@ jobs:
       DB_PLATFORM_PASSWORD: platform_pw
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
