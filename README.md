@@ -36,7 +36,7 @@ Password for all of them: the value of `DEMO_PASSWORD` in `.env.example`. Start 
 
 ## Share a demo link from GitHub (Codespaces)
 
-For client walkthroughs before hosting exists. On GitHub: **Code > Codespaces > Create codespace on main**. The first start builds everything (about 10 minutes); the terminal then prints the links, for example `https://<name>-8000.app.github.dev/crm`. Port 8000 is made public so anyone with the link can open it, using the demo logins above.
+For client walkthroughs before hosting exists. On GitHub: **Code > Codespaces > Create codespace on main**. The first start builds everything (about 10 minutes); run `bash .devcontainer/show-links.sh` in the terminal to see the links (or progress), for example `https://<name>-8000.app.github.dev/crm`. Port 8000 is made public so anyone with the link can open it, using the demo logins above.
 
 The link works only while the codespace is running: it stops after 30 minutes without use (raise the idle timeout in GitHub settings, up to 4 hours) and starts again from GitHub with the same address. Stop it after a demo. Demo data only: never put real people's data in a codespace.
 
