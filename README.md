@@ -34,6 +34,12 @@ Open **http://tsf.localhost:8000/crm** (agency) or **http://tsf.localhost:8000/p
 Password for all of them: the value of `DEMO_PASSWORD` in `.env.example`. Start again from clean data with
 `docker compose --profile app down -v` and the `up` command above. The demo seeder refuses to run in production.
 
+## Share a demo link from GitHub (Codespaces)
+
+For client walkthroughs before hosting exists. On GitHub: **Code > Codespaces > Create codespace on main**. The first start builds everything (about 10 minutes); the terminal then prints the links, for example `https://<name>-8000.app.github.dev/crm`. Port 8000 is made public so anyone with the link can open it, using the demo logins above.
+
+The link works only while the codespace is running: it stops after 30 minutes without use (raise the idle timeout in GitHub settings, up to 4 hours) and starts again from GitHub with the same address. Stop it after a demo. Demo data only: never put real people's data in a codespace.
+
 ## Run it locally (for development)
 
 Requirements: PHP 8.3+ with `pdo_pgsql` and `intl`, Composer, Node 20+, Docker (for Postgres/Redis/Mailpit) or a local Postgres 16.

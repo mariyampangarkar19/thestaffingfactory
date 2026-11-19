@@ -1,0 +1,8 @@
+# Codespaces has one fixed address and no sub-domains, so the demo agency is served on that address.
+services:
+  app:
+    environment:
+      APP_URL: ${DEMO_URL}
+      PLATFORM_DEMO_AGENCY: tsf
+      TRUSTED_PROXIES: "*"          # requests arrive through GitHub's port forwarding
+      SESSION_SECURE_COOKIE: "true"

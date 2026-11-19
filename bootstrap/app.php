@@ -35,8 +35,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->prependToPriorityList(StartSession::class, ResolveTenant::class);
         $middleware->encryptCookies();
-        // Set TRUSTED_PROXIES only if a load balancer or Cloudflare sits in front of the server.
-        $middleware->trustProxies(at: array_filter(explode(',', (string) env('TRUSTED_PROXIES', ''))));
+        // Set TRUSTED_PROXIES only if a load balancer or Cloudflare sits in front of the server
+        // (a list of addresses, or "*" for "whatever connects to us", which is right only behind a forwarding service).
+        $trustedProxies = (string) env('TRUSTED_PROXIES', '');
+        $middleware->trustProxies(at: $trustedProxies === '*' ? '*' : array_filter(explode(',', $trustedProxies)));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -34,6 +34,12 @@ return [
      */
     'demo_password' => env('DEMO_PASSWORD', 'Demo-Agency-2026'),
 
+    /*
+     * Demo hosting only (GitHub Codespaces): the agency slug served on any address that matches no agency.
+     * Leave empty everywhere else. Ignored when APP_ENV=production.
+     */
+    'demo_agency' => env('PLATFORM_DEMO_AGENCY'),
+
     'locales' => ['en', 'fr'],
 
     /*

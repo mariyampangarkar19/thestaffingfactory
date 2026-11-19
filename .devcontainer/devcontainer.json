@@ -1,0 +1,14 @@
+{
+    "name": "OPOPO demo",
+    "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    },
+    "hostRequirements": { "cpus": 2, "memory": "8gb" },
+    "postStartCommand": "bash .devcontainer/start-demo.sh",
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": { "label": "OPOPO demo", "onAutoForward": "notify" }
+    }
+}
