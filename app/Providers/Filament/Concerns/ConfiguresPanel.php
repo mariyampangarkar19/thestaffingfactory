@@ -2,11 +2,17 @@
 
 namespace App\Providers\Filament\Concerns;
 
+use App\Filament\Auth\Login;
 use App\Filament\Support\InitialsAvatarProvider;
+use App\Http\Controllers\CompleteTourController;
+use App\Http\Controllers\SwitchLanguageController;
 use App\Http\Middleware\SetDisplayTimezone;
 use App\Http\Middleware\SetLocale;
 use App\Support\Branding;
 use App\Tenancy\TenantContext;
+use Filament\Actions\Action;
+use Filament\Auth\Pages\PasswordReset\RequestPasswordReset;
+use Filament\Auth\Pages\PasswordReset\ResetPassword;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,6 +25,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
@@ -33,6 +40,13 @@ trait ConfiguresPanel
         600 => '#107f8d', 700 => '#006876', 800 => '#00525d', 900 => '#003c45', 950 => '#00272d',
     ];
 
+    /** Sign-in and password pages: these get the branded side panel. */
+    private const AUTH_PAGES = [
+        Login::class,
+        RequestPasswordReset::class,
+        ResetPassword::class,
+    ];
+
     protected function configure(Panel $panel, string $first): Panel
     {
         return $panel
@@ -42,7 +56,19 @@ trait ConfiguresPanel
             ->darkMode(false)
             ->defaultAvatarProvider(InitialsAvatarProvider::class)
             ->favicon(Branding::faviconUrl())
+            ->renderHook(PanelsRenderHook::SIMPLE_PAGE_END, fn (): View => view('filament.partials.language-switch'))
             ->renderHook(PanelsRenderHook::SIMPLE_PAGE_END, fn (): View => view('filament.partials.powered-by'))
+            ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, fn (): View => view('filament.partials.auth-aside'), scopes: self::AUTH_PAGES)
+            ->renderHook(PanelsRenderHook::USER_MENU_BEFORE, fn (): View => view('filament.partials.language-switch'))
+            ->routes(fn () => Route::post('language/{locale}', SwitchLanguageController::class)->name('language')->middleware('throttle:30,1'))
+            ->authenticatedRoutes(fn () => Route::post('tour/done', CompleteTourController::class)->name('tour.done')->middleware('throttle:30,1'))
+            ->renderHook(PanelsRenderHook::BODY_END, fn (): View => view('filament.partials.welcome-tour'))
+            ->userMenuItems([
+                Action::make('tour')
+                    ->label(fn (): string => __('Take the tour'))
+                    ->icon('heroicon-o-map')
+                    ->url(fn (): string => filament()->getCurrentPanel()->getUrl().'?tour=1'),
+            ])
             ->middleware([
                 $first,
                 EncryptCookies::class,

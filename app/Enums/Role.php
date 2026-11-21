@@ -15,6 +15,19 @@ enum Role: string
     case Viewer = 'viewer';         // read-only
     case Freelancer = 'freelancer'; // freelancer portal only
 
+    public function label(): string
+    {
+        return match ($this) {
+            self::Owner => __('Owner'),
+            self::Manager => __('Manager'),
+            self::Recruiter => __('Recruiter'),
+            self::Sales => __('Sales'),
+            self::Finance => __('Finance'),
+            self::Viewer => __('Read only'),
+            self::Freelancer => __('Freelancer'),
+        };
+    }
+
     public function isStaff(): bool
     {
         return $this !== self::Freelancer;

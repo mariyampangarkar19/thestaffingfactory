@@ -64,15 +64,7 @@ class UserResource extends BaseResource
 
     public static function roleLabel(Role $role): string
     {
-        return match ($role) {
-            Role::Owner => __('Owner'),
-            Role::Manager => __('Manager'),
-            Role::Recruiter => __('Recruiter'),
-            Role::Sales => __('Sales'),
-            Role::Finance => __('Finance'),
-            Role::Viewer => __('Read only'),
-            Role::Freelancer => __('Freelancer'),
-        };
+        return $role->label();
     }
 
     /** One line per role so an owner knows what they are granting. */

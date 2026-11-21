@@ -1,6 +1,7 @@
 <?php
 
 use App\CountryPacks\Cameroon\CameroonPack;
+use App\Dashboard\Checks;
 use App\Reports\AssignmentsReport;
 use App\Reports\FreelancersReport;
 use App\Reports\HoursReport;
@@ -53,6 +54,19 @@ return [
     /*
      * Reports offered on the CRM "Reports and exports" page: address name => class implementing App\Reports\Contracts\Report.
      */
+    /*
+     * The CRM dashboard's "Needs your attention" list, in this order. Each class implements
+     * App\Dashboard\Contracts\AttentionCheck and decides for itself who may see it.
+     */
+    'dashboard_checks' => [
+        Checks\UnderstaffedShifts::class,
+        Checks\NewRequests::class,
+        Checks\NewRegistrations::class,
+        Checks\TimesheetsToReview::class,
+        Checks\PaymentsToPay::class,
+        Checks\ExpiringDocuments::class,
+    ],
+
     'reports' => [
         'assignments' => AssignmentsReport::class,
         'hours' => HoursReport::class,

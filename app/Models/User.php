@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -28,6 +29,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $tenant_id
  * @property string $email
  * @property ?string $locale
+ * @property ?Carbon $tour_completed_at
  */
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery
 {
@@ -43,6 +45,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return [
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
+            'tour_completed_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

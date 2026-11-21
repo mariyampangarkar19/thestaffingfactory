@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\Login;
 use App\Filament\Portal\Pages\Dashboard;
 use App\Http\Middleware\ResolveTenant;
 use App\Providers\Filament\Concerns\ConfiguresPanel;
@@ -25,7 +26,7 @@ class PortalPanelProvider extends PanelProvider
             ->id('portal')
             ->path('portal')
             ->authGuard('web')
-            ->login()
+            ->login(Login::class)
             ->passwordReset()
             ->topNavigation()
             ->maxContentWidth(Width::FiveExtraLarge)

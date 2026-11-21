@@ -120,7 +120,7 @@ class ShiftResource extends BaseResource
                     ->query(fn (Builder $query) => $query->whereRaw('(select count(*) from assignments a where a.shift_id = shifts.id and a.status in (?, ?, ?)) < shifts.headcount', ['assigned', 'confirmed', 'completed'])),
                 SelectFilter::make('status')->label(__('Status'))->options(ShiftStatus::class),
             ])
-            ->recordActions([self::assignAction(), ViewAction::make()->label(__('Who is on it'))])
+            ->recordActions([self::assignAction(), ViewAction::make()->iconButton()->tooltip(__('Who is on it'))])
             ->emptyStateHeading(__('No shifts to show'))
             ->emptyStateDescription(__('Shifts are created from a staffing request.'));
     }

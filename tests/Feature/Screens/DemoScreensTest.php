@@ -144,4 +144,53 @@ class DemoScreensTest extends TestCase
         // Only the owner manages the team.
         $this->assertSame(403, $open('manager@demo.test', 'crm/team'));
     }
+
+    public function test_owner_dashboard_says_what_needs_doing_today(): void
+    {
+        $this->signIn('owner@demo.test')->get($this->url('crm'))->assertOk()
+            ->assertSee('Needs your attention')
+            ->assertSee('upcoming shifts still need people')
+            ->assertSee('new staffing requests')
+            ->assertSee('new freelancer registrations')
+            ->assertSee('payments waiting to be sent')
+            ->assertSee('New staffing request');
+    }
+
+    public function test_read_only_user_gets_no_jobs_and_no_shortcuts(): void
+    {
+        $this->signIn('viewer@demo.test')->get($this->url('crm'))->assertOk()
+            ->assertSee('All caught up')
+            ->assertDontSee('New staffing request')
+            ->assertDontSee('payments waiting to be sent');
+    }
+
+    public function test_freelancer_home_shows_the_next_shift_and_the_hours_to_submit(): void
+    {
+        $this->signIn('freelancer@demo.test')->get($this->url('portal'))->assertOk()
+            ->assertSee('Your next shift')
+            ->assertSee('Palais des Congrès, Yaoundé')
+            ->assertSee('is waiting for your hours');
+    }
+
+    public function test_welcome_tour_shows_until_it_is_finished_and_again_on_request(): void
+    {
+        $this->inAgency(fn () => User::query()->where('email', 'owner@demo.test')->update(['tour_completed_at' => null]));
+
+        $this->signIn('owner@demo.test')->get($this->url('crm'))->assertOk()->assertSee('sp-tour', false);
+        $this->post($this->url('crm/tour/done'))->assertNoContent();
+
+        $this->assertNotNull($this->inAgency(fn () => User::query()->where('email', 'owner@demo.test')->value('tour_completed_at')));
+        $this->get($this->url('crm'))->assertOk()->assertDontSee('sp-tour__next', false);
+        $this->get($this->url('crm?tour=1'))->assertOk()->assertSee('sp-tour__next', false);
+    }
+
+    public function test_tour_is_not_shown_on_the_sign_in_page(): void
+    {
+        $this->get($this->url('crm/login'))->assertOk()->assertDontSee('sp-tour__next', false);
+    }
+
+    private function url(string $path): string
+    {
+        return $this->tenantUrl($this->tenant, $path);
+    }
 }

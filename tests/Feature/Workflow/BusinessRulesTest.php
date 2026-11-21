@@ -90,7 +90,8 @@ class BusinessRulesTest extends TestCase
     /** The under-staffed waiter shift on the wedding day (2 of 4). */
     private function openShift(): Shift
     {
-        return Shift::query()->where('headcount', 4)->firstOrFail();
+        // The waiter shift of the year-end gala: Brenda and Boris are on it, two places are still free.
+        return Shift::query()->where('headcount', 4)->where('starts_at', '>', now()->addWeek())->firstOrFail();
     }
 
     public function test_assigning_enforces_approval_position_clashes_availability_and_headcount(): void
@@ -101,12 +102,14 @@ class BusinessRulesTest extends TestCase
 
         $this->refused(fn () => $assign->handle($shift, $this->freelancer('Diane'), $recruiter));     // not approved yet
         $this->refused(fn () => $assign->handle($shift, $this->freelancer('Brenda'), $recruiter));    // already on this shift
-        $this->refused(fn () => $assign->handle($shift, $this->freelancer('Estelle'), $recruiter));   // marked unavailable that day
+        $this->refused(fn () => $assign->handle($shift, $this->freelancer('Kevin'), $recruiter));     // marked unavailable that day
         $this->refused(fn () => $assign->handle($shift, $this->freelancer('Christian'), $recruiter)); // on the bar shift at the same time
 
-        $assignment = $assign->handle($shift, $this->freelancer('Franck'), $recruiter);
+        $franck = $this->freelancer('Franck');
+        $before = $franck->user->notifications()->count();
+        $assignment = $assign->handle($shift, $franck, $recruiter);
         $this->assertSame('1500.00', $assignment->pay_rate, 'The standard waiter rate is copied onto the assignment.');
-        $this->assertSame(1, $assignment->freelancerProfile->user->notifications()->count());
+        $this->assertSame($before + 1, $assignment->freelancerProfile->user->notifications()->count(), 'Franck is told about the new shift.');
 
         // Fill the last place, then one more is refused.
         $shift->update(['headcount' => 3]);
@@ -116,7 +119,7 @@ class BusinessRulesTest extends TestCase
     public function test_hours_go_from_submitted_to_approved_to_paid_exactly_once(): void
     {
         $larissa = $this->freelancer('Larissa');
-        $assignment = Assignment::query()->where('freelancer_profile_id', $larissa->id)
+        $assignment = Assignment::query()->where('freelancer_profile_id', $larissa->id)->whereDoesntHave('timesheet') // the shift she has not declared yet
             ->whereHas('shift', fn ($q) => $q->where('ends_at', '<', now()))->with('shift')->firstOrFail();
         $shift = $assignment->shift;
 
@@ -152,11 +155,13 @@ class BusinessRulesTest extends TestCase
     {
         $pending = Payment::query()->where('status', PaymentStatus::Pending)->firstOrFail();
         $freelancerId = $pending->freelancer_profile_id;
+        $lines = $pending->items()->count();
+        $this->assertGreaterThan(0, $lines);
         $this->assertSame(0, CreatePayment::payable($freelancerId)->count());
 
         app(MarkPaymentPaid::class)->cancel($pending);
 
-        $this->assertSame(1, CreatePayment::payable($freelancerId)->count());
+        $this->assertSame($lines, CreatePayment::payable($freelancerId)->count());
     }
 
     public function test_money_is_rounded_to_the_nearest_unit_without_float_errors(): void
@@ -174,13 +179,14 @@ class BusinessRulesTest extends TestCase
         $completed = StaffRequest::query()->where('status', RequestStatus::Completed)->firstOrFail();
         $this->refused(fn () => $change->handle($completed, RequestStatus::InProgress));
 
-        $wedding = StaffRequest::query()->where('title', 'like', 'Mariage%')->firstOrFail();
+        $wedding = StaffRequest::query()->where('title', 'like', 'Mariage Owona%')->firstOrFail();
         $booked = Assignment::query()->whereIn('shift_id', $wedding->shifts()->pluck('id'));
-        $this->assertSame(6, (clone $booked)->where('status', AssignmentStatus::Assigned)->count());
+        $active = (clone $booked)->whereIn('status', [AssignmentStatus::Assigned, AssignmentStatus::Confirmed])->count();
+        $this->assertGreaterThan(0, $active);
 
         $change->handle($wedding, RequestStatus::Cancelled, 'Client a annulé');
 
-        $this->assertSame(6, (clone $booked)->where('status', AssignmentStatus::Cancelled)->count());
+        $this->assertSame($active, (clone $booked)->where('status', AssignmentStatus::Cancelled)->count());
         $this->assertSame('Client a annulé', $wedding->refresh()->cancel_reason);
     }
 
@@ -312,7 +318,7 @@ class BusinessRulesTest extends TestCase
             $this->assertStringStartsWith('PK', $response->streamedContent(), 'A real .xlsx (zip) file.');
         }
 
-        $get('owner@demo.test', 'assignments', 'print')->assertOk()->assertSee('Hôtel Sawa Palace')->assertSee('Brenda Ngo Bassa');
+        $get('owner@demo.test', 'assignments', 'print')->assertOk()->assertSee('Hôtel Rives du Wouri')->assertSee('Brenda Ngo Bassa');
         $get('manager@demo.test', 'payments')->assertOk();
         $get('sales@demo.test', 'assignments')->assertForbidden();
         $get('freelancer@demo.test', 'assignments')->assertForbidden();

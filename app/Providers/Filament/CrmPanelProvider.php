@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\Login;
 use App\Filament\Crm\Pages\Dashboard;
 use App\Http\Middleware\ResolveTenant;
 use App\Providers\Filament\Concerns\ConfiguresPanel;
@@ -27,7 +28,7 @@ class CrmPanelProvider extends PanelProvider
             ->id('crm')
             ->path('crm')
             ->authGuard('web')
-            ->login()
+            ->login(Login::class)
             ->passwordReset()
             ->profile()
             ->multiFactorAuthentication(
